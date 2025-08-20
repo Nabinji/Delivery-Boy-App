@@ -229,7 +229,6 @@ class OrderDetailsScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-
                     // Step 2: Delivery
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -289,54 +288,6 @@ class OrderDetailsScreen extends StatelessWidget {
         ),
       ),
 
-      // bottomNavigationBar: Consumer<DeliveryProvider>(
-      //   builder: (context, provider, child) {
-      //     return Container(
-      //       color: Colors.white,
-      //       child: Padding(
-      //         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-      //         child: provider.status == DeliveryStatus.orderAccepted
-      //             ? CustomButton(
-      //                 title: "Start Pickup",
-      //                 onPressed: () {
-      //                   Navigator.pushReplacement(
-      //                     context,
-      //                     MaterialPageRoute(
-      //                       builder: (context) => const DeliveryMapScreen(),
-      //                     ),
-      //                   );
-      //                 },
-      //               )
-      //             : Row(
-      //                 children: [
-      //                   Expanded(
-      //                     child: CustomButton(
-      //                       color: declineOrder,
-      //                       title: "Decline Order",
-      //                       textColor: Colors.black54,
-      //                       onPressed: () {
-      //                         context.read<DeliveryProvider>().rejectOrder();
-      //                         Navigator.pop(
-      //                           context,
-      //                         ); // Go back to DriverHomeScreen
-      //                       },
-      //                     ),
-      //                   ),
-      //                   SizedBox(width: 10),
-      //                   Expanded(
-      //                     child: CustomButton(
-      //                       title: "Accept Order",
-      //                       onPressed: () {
-      //                         context.read<DeliveryProvider>().acceptOrder();
-      //                       },
-      //                     ),
-      //                   ),
-      //                 ],
-      //               ),
-      //       ),
-      //     );
-      //   },
-      // ),
       bottomNavigationBar: Consumer<DeliveryProvider>(
         builder: (context, provider, child) {
           return Container(
@@ -344,10 +295,11 @@ class OrderDetailsScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
               child: provider.status == DeliveryStatus.orderAccepted
+               // Show single "Start Pickup" button after order is accepted
                   ? CustomButton(
                       title: "Start Pickup",
                       onPressed: () {
-                        // Call startPickup() before navigation
+                        // Move delivery boy to pickup location and navigate to map
                         context.read<DeliveryProvider>().startPickup();
                         Navigator.pushReplacement(
                           context,

@@ -2,7 +2,7 @@ import 'package:delivery_boy_app/screen/driver_home_screen.dart';
 import 'package:delivery_boy_app/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
+// simple bottomNavigationBar according to the desing
 class AppMainScreen extends StatefulWidget {
   const AppMainScreen({super.key});
 
@@ -11,6 +11,7 @@ class AppMainScreen extends StatefulWidget {
 }
 
 class _AppMainScreenState extends State<AppMainScreen> {
+  // initially dispaly the index of th pages list
   int _currentIndex = 0;
   final List<Widget> pages = [
     DriverHomeScreen(),
@@ -20,9 +21,9 @@ class _AppMainScreenState extends State<AppMainScreen> {
   ];
 
   final List<IconData> _icons = [
-    FontAwesomeIcons.house, // Home
-    FontAwesomeIcons.boxOpen, // Orders
-    FontAwesomeIcons.truckFast, // Shipment
+    FontAwesomeIcons.house, 
+    FontAwesomeIcons.boxOpen, 
+    FontAwesomeIcons.truckFast, 
     FontAwesomeIcons.solidCircleUser,
   ];
 

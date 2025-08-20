@@ -36,16 +36,7 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
             children: [
               // Google Map
               _buildGoogleMap(provider),
-
-              // if ((provider.status == DeliveryStatus.orderAccepted ||
-              //         provider.status == DeliveryStatus.pickingUp ||
-              //         provider.status == DeliveryStatus.enRoute ||
-              //         provider.status == DeliveryStatus.destinationReached ||
-              //         provider.status == DeliveryStatus.delivered) &&
-              //     provider.currentOrder != null)
-              //   _buildOrderCard(provider),
-              // In your DeliveryMapScreen, update the condition that shows OrderOnTheWay widget
-              // Replace your current condition with this:
+              // Order status widget layer - shows delivery progress and action buttons
               Consumer<DeliveryProvider>(
                 builder: (context, provider, child) {
                   if (provider.currentOrder == null) return SizedBox();
@@ -64,6 +55,8 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
                         status: provider.status,
                         onButtonPressed: () {
                           switch (provider.status) {
+                            // Handle button presses based on current delivery status
+
                             case DeliveryStatus.pickingUp:
                               provider.markAsPickedUp();
                               break;
@@ -96,6 +89,7 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
     );
   }
 
+  // Builds and configures the Google Map widget
   Widget _buildGoogleMap(DeliveryProvider provider) {
     return GoogleMap(
       onMapCreated: (GoogleMapController controller) {
@@ -115,6 +109,7 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
     );
   }
 
+  // Creates map markers for pickup, delivery, and delivery boy locations
   Set<Marker> _buildMarkers(DeliveryProvider provider) {
     Set<Marker> markers = {};
 
@@ -161,10 +156,11 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
     return markers;
   }
 
+  // Creates route line on map showing path between locations
   Set<Polyline> _buildPolylines(DeliveryProvider provider) {
     Set<Polyline> polylines = {};
 
-    // Show polyline when order is accepted or later
+    // Show polyline when order is accepted
     if (provider.routePoints.isNotEmpty &&
         provider.status != DeliveryStatus.waitingForAcceptance &&
         provider.status != DeliveryStatus.rejected) {
@@ -174,7 +170,6 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
           points: provider.routePoints,
           color: buttonMainColor,
           width: 6,
-          // patterns: [PatternItem.dash(10), PatternItem.gap(10)],
         ),
       );
     }
@@ -182,74 +177,7 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
     return polylines;
   }
 
-  // Widget _buildOrderCard(DeliveryProvider provider) {
-  //   if (provider.currentOrder == null) {
-  //     return const SizedBox.shrink();
-  //   }
-
-  //   return Positioned(
-  //     bottom: 0,
-  //     left: 0,
-  //     right: 0,
-  //     child: Consumer<DeliveryProvider>(
-  //       builder: (context, provider, child) {
-  //         if (provider.currentOrder == null) return SizedBox();
-
-  //         return OrderOnTheWay(
-  //           order: provider.currentOrder!,
-  //           status: provider.status,
-  //           onButtonPressed: () {
-  //             switch (provider.status) {
-  //               case DeliveryStatus.pickingUp:
-  //                 provider.markAsPickedUp();
-  //                 break;
-  //               case DeliveryStatus.destinationReached:
-  //                 // When user clicks "Mark as Destination Reached"
-  //                 provider
-  //                     .markAsDelivered(); // This changes to "Mark as Delivered" button
-  //                 break;
-  //               case DeliveryStatus.markingAsDelivered:
-  //                 // When user clicks "Mark as Delivered"
-  //                 provider
-  //                     .completeDelivery(); // This shows success and disables button
-  //                 // Show success message
-  //                 ScaffoldMessenger.of(context).showSnackBar(
-  //                   SnackBar(
-  //                     content: Text('Order delivered successfully!'),
-  //                     backgroundColor: Colors.green,
-  //                     duration: Duration(seconds: 3),
-  //                   ),
-  //                 );
-  //                 break;
-  //               default:
-  //                 break;
-  //             }
-  //           },
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
-
-  // void _handleButtonPress(DeliveryProvider provider) {
-  //   switch (provider.status) {
-  //     case DeliveryStatus.orderAccepted:
-  //       provider.startPickup(); // Changes status to pickingUp
-  //       break;
-  //     case DeliveryStatus.pickingUp:
-  //       provider.markAsPickedUp(); // Start delivery animation
-  //       break;
-  //     case DeliveryStatus.destinationReached:
-  //       provider.markAsDelivered(); // Change to delivered state
-  //       break;
-  //     case DeliveryStatus.delivered:
-  //       _buildDeliveryCompleteCard(provider); // Show success dialog
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // }
-
+  // Shows success overlay when delivery is completed
   Widget _buildDeliveryCompleteCard(DeliveryProvider provider) {
     return Positioned.fill(
       child: Container(
@@ -314,6 +242,7 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
     );
   }
 
+  // Smoothly moves map camera to specified location with animation according to the marker
   void _moveToLocation(LatLng location) {
     _mapController?.animateCamera(CameraUpdate.newLatLngZoom(location, 14));
   }

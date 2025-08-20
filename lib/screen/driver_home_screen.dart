@@ -16,7 +16,7 @@ class DriverHomeScreen extends StatefulWidget {
 class _DriverHomeScreenState extends State<DriverHomeScreen> {
   GoogleMapController? mapController;
   bool isOnline = true;
-  // In DriverHomeScreen initState:
+  // Initialize screen - create a new order when screen loads
   @override
   void initState() {
     super.initState();
@@ -24,12 +24,12 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       context.read<DeliveryProvider>().initializeOrder();
     });
   }
-
+  // Callback when Google Map is ready
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
 
-  // Create markers directly without setState
+  // Create markers for current location on map
   Set<Marker> _buildMarkers(LatLng currentLocation) {
     return {
       Marker(
@@ -49,6 +49,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     return Scaffold(
       body: Consumer<CurrentLocationProvider>(
         builder: (context, locationProvider, child) {
+            // Show loading spinner while getting location
           if (locationProvider.isLoading) {
             return Center(
               child: Column(
@@ -61,7 +62,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               ),
             );
           }
-          // ✅ Handle error after build
+          //show error message after permission denied
           if (locationProvider.errorMessage.isNotEmpty) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               showAppSnackbar(
@@ -74,6 +75,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
           Size size = MediaQuery.of(context).size;
           return Stack(
             children: [
+              // display the google map
               GoogleMap(
                 onMapCreated: _onMapCreated,
                 initialCameraPosition: CameraPosition(
@@ -90,14 +92,17 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                 rotateGesturesEnabled: true,
                 mapType: MapType.normal,
               ),
+              
               if(locationProvider.errorMessage.isEmpty)
+               // Show order card at bottom (only if no location error/ show only if location permission is garented)
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
-                  child: OrderCard(),
+                  child: OrderCard(), // Widget showing order details and buttons
                 ),
               ),
+              // show static online button at the top 
               Align(
                 alignment: Alignment.topCenter,
                 child: Container(
