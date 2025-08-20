@@ -342,14 +342,24 @@ class OrderOnTheWay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(vertical: 5),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(25),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        // mainAxisAlignment: ,
         children: [
+          SizedBox(height: 10),
+          Container(
+            height: 5,
+            width: 40,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.black26,
+            ),
+          ),
           ListTile(
             leading: Icon(_getPickupIcon(), color: _getPickupIconColor()),
             title: Text(
@@ -376,42 +386,92 @@ class OrderOnTheWay extends StatelessWidget {
               child: Icon(Icons.phone, color: Colors.white),
             ),
           ),
+
           Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SizedBox(
-              width: double.maxFinite,
-              child: CustomButton(
-                title: _getButtonTitle(),
-                onPressed: _isButtonEnabled()
-                    ? (onButtonPressed ?? () {})
-                    : () {}, // Use empty function instead of null
-                color: _getButtonColor(),
-              ),
-            ),
+            padding: const EdgeInsets.all(20.0),
+            child: SizedBox(width: double.maxFinite, child: _buttonStyle()),
           ),
         ],
       ),
     );
   }
 
+  Widget _buttonStyle() {
+    switch (status) {
+      case DeliveryStatus.destinationReached:
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18),
+          child: GestureDetector(
+            onTap: _isButtonEnabled()
+                ? (onButtonPressed ?? () {})
+                : () {},
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 11),
+                    decoration: BoxDecoration(
+                      color: pickedUpColor.withAlpha(170),
+                      borderRadius: BorderRadius.horizontal(
+                        left: Radius.circular(30),
+                      ),
+                    ),
+                    child: Icon(Icons.arrow_forward, color: Colors.white),
+                  ),
+                ),
+                Expanded(
+                  flex: 17,
+                  child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 11),
+                    decoration: BoxDecoration(
+                      color: _getButtonColor(),
+                      borderRadius: BorderRadius.horizontal(
+                        right: Radius.circular(30),
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        _getButtonTitle(),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      default:
+        return CustomButton(
+          title: _getButtonTitle(),
+          onPressed: _isButtonEnabled()
+              ? (onButtonPressed ?? () {})
+              : () {}, // Use empty function instead of null
+          color: _getButtonColor(),
+        );
+    }
+  }
+
   Color _getButtonColor() {
     switch (status) {
       case DeliveryStatus.pickingUp:
-        return Colors.orange; // Orange for "Mark as Picked Up"
+        return pickedUpColor; // Orange for "Mark as Picked Up"
       case DeliveryStatus.enRoute:
-        return Colors.orange.withOpacity(
-          0.5,
-        ); // Orange with opacity for "Delivering..." (disabled)
+        // Orange with opacity for "Delivering..." (disabled)
+        return Colors.orange.withAlpha(150);
       case DeliveryStatus.destinationReached:
-        return Colors.orange; // Orange for "Mark as Destination Reached"
+        return pickedUpColor; // Orange for "Mark as Destination Reached"
       case DeliveryStatus.markingAsDelivered:
-        return Colors.red; // Red for "Mark as Delivered"
+        return buttonMainColor; // Red for "Mark as Delivered"
       case DeliveryStatus.delivered:
-        return Colors.red.withOpacity(
-          0.5,
-        ); // Red with opacity for disabled look
+        return Colors.red.withAlpha(150); // Red with opacity for disabled look
       default:
-        return Colors.red;
+        return buttonMainColor;
     }
   }
 
@@ -458,7 +518,7 @@ class OrderOnTheWay extends StatelessWidget {
     switch (status) {
       case DeliveryStatus.enRoute:
       case DeliveryStatus.destinationReached:
-       case DeliveryStatus.markingAsDelivered:
+      case DeliveryStatus.markingAsDelivered:
       case DeliveryStatus.delivered:
         return buttonMainColor; // Green when picked up
       default:

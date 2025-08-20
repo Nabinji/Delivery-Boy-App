@@ -6,9 +6,7 @@ import 'package:delivery_boy_app/widgets/dash_vertical_line.dart';
 import 'package:flutter/material.dart';
 
 class OrderCard extends StatelessWidget {
-  const OrderCard({
-    super.key,
-  });
+  const OrderCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -65,36 +63,41 @@ class OrderCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Item Info
-                Row(
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.brown[100],
-                        borderRadius: BorderRadius.circular(8),
-                        image: DecorationImage(
-                          image: NetworkImage(tenderCoconut),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Text.rich(
-                      TextSpan(
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15,
-                        ),
-                        children: [
-                          TextSpan(text: "Tender Coconut (Normal) "),
-                          TextSpan(
-                            text: " × 4",
-                            style: TextStyle(color: Colors.black38),
+                Material(
+                  color: Colors.white,
+                  elevation: 1,
+                  shadowColor: Colors.black26,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.brown[100],
+                          borderRadius: BorderRadius.circular(8),
+                          image: DecorationImage(
+                            image: NetworkImage(tenderCoconut),
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 12),
+                      Text.rich(
+                        TextSpan(
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
+                          ),
+                          children: [
+                            TextSpan(text: "Tender Coconut (Normal) "),
+                            TextSpan(
+                              text: " × 4",
+                              style: TextStyle(color: Colors.black38),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 20),
                 // pickup and delivery
@@ -129,7 +132,11 @@ class OrderCard extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.location_on_outlined, color: buttonMainColor, size: 22),
+                    const Icon(
+                      Icons.location_on_outlined,
+                      color: buttonMainColor,
+                      size: 22,
+                    ),
                     const SizedBox(width: 5),
                     pickupAndDeliveryInfo(
                       "Delivery - ",
@@ -144,14 +151,14 @@ class OrderCard extends StatelessWidget {
                   width: double.maxFinite,
                   child: CustomButton(
                     title: "View order details",
-                   onPressed: () {
+                    onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const OrderDetailsScreen(),
                         ),
                       );
-                    }
+                    },
                   ),
                 ),
               ],

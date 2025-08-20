@@ -367,6 +367,11 @@ class OrderDetailsScreen extends StatelessWidget {
                             onPressed: () {
                               context.read<DeliveryProvider>().rejectOrder();
                               Navigator.pop(context);
+                              showAppSnackbar(
+                                context: context,
+                                type: SnackbarType.error,
+                                description: "Order is not accepted",
+                              );
                             },
                           ),
                         ),

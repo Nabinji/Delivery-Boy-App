@@ -33,7 +33,7 @@ showAppSnackbar({
 
     case SnackbarType.error:
       CherryToast.error(
-        toastDuration: Duration(milliseconds: 2000),
+        toastDuration: Duration(milliseconds: 3000),
         height: 70,
         toastPosition: Position.top,
         shadowColor: Colors.white,

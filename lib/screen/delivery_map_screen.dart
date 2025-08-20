@@ -1,5 +1,7 @@
 import 'package:delivery_boy_app/provider/delivery_provider.dart';
 import 'package:delivery_boy_app/screen/app_main_screen.dart';
+import 'package:delivery_boy_app/utils/colors.dart';
+import 'package:delivery_boy_app/widgets/custom_button.dart';
 import 'package:delivery_boy_app/widgets/order_on_the_way.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -56,7 +58,7 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
                   return Align(
                     alignment: Alignment.bottomCenter,
                     child: Padding(
-                      padding: const EdgeInsets.all(15.0),
+                      padding: const EdgeInsets.all(0.0),
                       child: OrderOnTheWay(
                         order: provider.currentOrder!,
                         status: provider.status,
@@ -170,9 +172,9 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
         Polyline(
           polylineId: const PolylineId('route'),
           points: provider.routePoints,
-          color: Colors.red,
-          width: 4,
-          patterns: [PatternItem.dash(10), PatternItem.gap(10)],
+          color: buttonMainColor,
+          width: 6,
+          // patterns: [PatternItem.dash(10), PatternItem.gap(10)],
         ),
       );
     }
@@ -180,73 +182,73 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
     return polylines;
   }
 
-  Widget _buildOrderCard(DeliveryProvider provider) {
-    if (provider.currentOrder == null) {
-      return const SizedBox.shrink();
-    }
+  // Widget _buildOrderCard(DeliveryProvider provider) {
+  //   if (provider.currentOrder == null) {
+  //     return const SizedBox.shrink();
+  //   }
 
-    return Positioned(
-      bottom: 0,
-      left: 0,
-      right: 0,
-      child: Consumer<DeliveryProvider>(
-        builder: (context, provider, child) {
-          if (provider.currentOrder == null) return SizedBox();
+  //   return Positioned(
+  //     bottom: 0,
+  //     left: 0,
+  //     right: 0,
+  //     child: Consumer<DeliveryProvider>(
+  //       builder: (context, provider, child) {
+  //         if (provider.currentOrder == null) return SizedBox();
 
-          return OrderOnTheWay(
-            order: provider.currentOrder!,
-            status: provider.status,
-            onButtonPressed: () {
-              switch (provider.status) {
-                case DeliveryStatus.pickingUp:
-                  provider.markAsPickedUp();
-                  break;
-                case DeliveryStatus.destinationReached:
-                  // When user clicks "Mark as Destination Reached"
-                  provider
-                      .markAsDelivered(); // This changes to "Mark as Delivered" button
-                  break;
-                case DeliveryStatus.markingAsDelivered:
-                  // When user clicks "Mark as Delivered"
-                  provider
-                      .completeDelivery(); // This shows success and disables button
-                  // Show success message
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Order delivered successfully!'),
-                      backgroundColor: Colors.green,
-                      duration: Duration(seconds: 3),
-                    ),
-                  );
-                  break;
-                default:
-                  break;
-              }
-            },
-          );
-        },
-      ),
-    );
-  }
+  //         return OrderOnTheWay(
+  //           order: provider.currentOrder!,
+  //           status: provider.status,
+  //           onButtonPressed: () {
+  //             switch (provider.status) {
+  //               case DeliveryStatus.pickingUp:
+  //                 provider.markAsPickedUp();
+  //                 break;
+  //               case DeliveryStatus.destinationReached:
+  //                 // When user clicks "Mark as Destination Reached"
+  //                 provider
+  //                     .markAsDelivered(); // This changes to "Mark as Delivered" button
+  //                 break;
+  //               case DeliveryStatus.markingAsDelivered:
+  //                 // When user clicks "Mark as Delivered"
+  //                 provider
+  //                     .completeDelivery(); // This shows success and disables button
+  //                 // Show success message
+  //                 ScaffoldMessenger.of(context).showSnackBar(
+  //                   SnackBar(
+  //                     content: Text('Order delivered successfully!'),
+  //                     backgroundColor: Colors.green,
+  //                     duration: Duration(seconds: 3),
+  //                   ),
+  //                 );
+  //                 break;
+  //               default:
+  //                 break;
+  //             }
+  //           },
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 
-  void _handleButtonPress(DeliveryProvider provider) {
-    switch (provider.status) {
-      case DeliveryStatus.orderAccepted:
-        provider.startPickup(); // Changes status to pickingUp
-        break;
-      case DeliveryStatus.pickingUp:
-        provider.markAsPickedUp(); // Start delivery animation
-        break;
-      case DeliveryStatus.destinationReached:
-        provider.markAsDelivered(); // Change to delivered state
-        break;
-      case DeliveryStatus.delivered:
-        _buildDeliveryCompleteCard(provider); // Show success dialog
-        break;
-      default:
-        break;
-    }
-  }
+  // void _handleButtonPress(DeliveryProvider provider) {
+  //   switch (provider.status) {
+  //     case DeliveryStatus.orderAccepted:
+  //       provider.startPickup(); // Changes status to pickingUp
+  //       break;
+  //     case DeliveryStatus.pickingUp:
+  //       provider.markAsPickedUp(); // Start delivery animation
+  //       break;
+  //     case DeliveryStatus.destinationReached:
+  //       provider.markAsDelivered(); // Change to delivered state
+  //       break;
+  //     case DeliveryStatus.delivered:
+  //       _buildDeliveryCompleteCard(provider); // Show success dialog
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // }
 
   Widget _buildDeliveryCompleteCard(DeliveryProvider provider) {
     return Positioned.fill(
@@ -254,23 +256,26 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
         color: Colors.black54,
         child: Center(
           child: Container(
-            margin: const EdgeInsets.all(20),
+            margin: const EdgeInsets.all(15),
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  width: 80,
-                  height: 80,
+                  width: 100,
+                  height: 100,
                   decoration: BoxDecoration(
-                    color: Colors.green.shade100,
-                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(
+                        "https://media.tenor.com/bm8Q6yAlsPsAAAAj/verified.gif",
+                      ),
+                    ),
                   ),
-                  child: const Icon(Icons.check, color: Colors.green, size: 40),
                 ),
                 const SizedBox(height: 16),
                 const Text(
@@ -286,7 +291,8 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
                 const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
+                  child: CustomButton(
+                    title: 'Go Home',
                     onPressed: () {
                       Navigator.of(context).pop(); // Close dialog
                       provider.resetDelivery();
@@ -298,21 +304,6 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
                         (route) => false,
                       );
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text(
-                      'Go Home',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
                   ),
                 ),
               ],

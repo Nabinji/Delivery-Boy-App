@@ -15,9 +15,8 @@ class DriverHomeScreen extends StatefulWidget {
 
 class _DriverHomeScreenState extends State<DriverHomeScreen> {
   GoogleMapController? mapController;
-  final Set<Marker> _markers = {};
   bool isOnline = true;
-// In DriverHomeScreen initState:
+  // In DriverHomeScreen initState:
   @override
   void initState() {
     super.initState();
@@ -25,24 +24,24 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       context.read<DeliveryProvider>().initializeOrder();
     });
   }
+
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
 
-  void _addMarker(LatLng position) {
-    setState(() {
-      _markers.add(
-        Marker(
-          markerId: MarkerId('current_location'),
-          position: position,
-          infoWindow: InfoWindow(
-            title: 'Current Location',
-            snippet: 'You are here!',
-          ),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+  // Create markers directly without setState
+  Set<Marker> _buildMarkers(LatLng currentLocation) {
+    return {
+      Marker(
+        markerId: MarkerId('current_location'),
+        position: currentLocation,
+        infoWindow: InfoWindow(
+          title: 'Current Location',
+          snippet: 'You are here!',
         ),
-      );
-    });
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+      ),
+    };
   }
 
   @override
@@ -62,11 +61,16 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               ),
             );
           }
-
-          // Add marker for current location
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _addMarker(locationProvider.currentLocation);
-          });
+          // ✅ Handle error after build
+          if (locationProvider.errorMessage.isNotEmpty) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              showAppSnackbar(
+                context: context,
+                type: SnackbarType.error,
+                description: locationProvider.errorMessage,
+              );
+            });
+          }
           Size size = MediaQuery.of(context).size;
           return Stack(
             children: [
@@ -76,7 +80,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                   target: locationProvider.currentLocation,
                   zoom: 15.0,
                 ),
-                markers: _markers,
+                markers: _buildMarkers(locationProvider.currentLocation),
                 myLocationEnabled: true,
                 myLocationButtonEnabled: false,
                 zoomControlsEnabled: true,
@@ -86,18 +90,14 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                 rotateGesturesEnabled: true,
                 mapType: MapType.normal,
               ),
-              if (locationProvider.errorMessage.isNotEmpty)
-                showAppSnackbar(
-                  context: context,
-                  type: SnackbarType.error,
-                  description: "Location Permission Denied",
-                ),
-                Align(alignment: Alignment.bottomCenter, 
+              if(locationProvider.errorMessage.isEmpty)
+              Align(
+                alignment: Alignment.bottomCenter,
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: OrderCard(),
                 ),
-                ),
+              ),
               Align(
                 alignment: Alignment.topCenter,
                 child: Container(
@@ -131,7 +131,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                                     child: Text(
                                       "Online",
                                       style: TextStyle(
-                                        color: Colors.white,fontSize: 16,fontWeight: FontWeight.w500
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ),
